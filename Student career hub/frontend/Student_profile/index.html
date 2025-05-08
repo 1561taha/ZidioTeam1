@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Career Hub</title>
+    <link href="style.css" rel="stylesheet">
+    <style>
+        html, body {
+          margin: 0;
+          padding: 0;
+          height: 100%;
+        }
+    
+        .wrapper {
+          display: flex;
+          flex-direction: column;
+          min-height: 100vh;
+        }
+    
+        main {
+          flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+            <div class="head">
+                <img src="logo.png" alt="Logo" class="logo">
+                <span class="title" >Student Career Hub</span>
+            </div>
+            <nav class="nav">
+                <a href="../Dashboard(Home)/index.html" class="Home">Home</a>
+                <a href="#" class="Profile">Profile</a>
+                <a href="#" class="Jobs" >Jobs</a>
+                <a href="#" class="Applications" >Applications</a>
+                <a href="#" class="logout" >Logout</a>
+            </nav>
+        </header>
+        <main class="container">
+            <center>
+                <h1 class="profileoverview">Profile Overview</h1>
+                <div class="profile-wrapper">
+                    <label for="upload" class="profile-pic-label">
+                      <img id="profileImage" src="defaultpic.png">
+                      <input type="file" id="upload" accept="image/*" style="display: none;">
+                    </label>
+                    <div id="Name">Your Name</div>
+                </div>
+                <div class="personaldiv">
+                    <h1 class="Personalinformation">Personal Information</h1><br>
+                    <div class="card-container">
+                        <label for="fname">Full Name</label>
+                        <input type="text" id="fname" name="fname" placeholder="Enter Full-Name"><br>
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="Enter Email"><br>
+                        <label for="phonenumber">Phone number</label>
+                        <input type="number" id="phonenumber" name="phonenumber" placeholder="Enter Phone-Number"><br>
+                        <label for="dateofbirth">Date of Birth</label>
+                        <input type="date" id="dateofbirth" name="dateofbirth" placeholder="Select Date-of-Birth"><br>
+                        <label for="address">Address</label>
+                        <textarea type="text" id="address" name="address" placeholder="Enter Address"></textarea><br>
+                        <label for="linkedln">Linkedln Id</label>
+                        <input type="url" id="linkedln" name="linkedln" placeholder="Type Linkedln ID"><br>
+                        <label for="githubid">Github Id</label>
+                        <input type="url" id="githubid" name="githubid" placeholder="Type Github ID"><br>
+                        <label for="resumeattach">Upload Resume</label>
+                        <input type="file" id="resumeattach" name="resumeattach" accept=".pdf,.docx"><br>
+                        <span id="filename"></span>
+                        <button id="editbutton" onclick="toggleEdit()">Edit Profile</button>
+                    </div>
+                </div>
+                <div class="educationdiv">
+                    <h1 class="educationdetails">Education Details</h1>
+                    <div class="educationdetailsdiv">
+                      <label for="degree">Enter Degree</label>
+                      <input type="text" id="degree" name="degree" placeholder="Enter Degree"><br>
+                      <label for="collagename">Enter Institution</label>
+                      <input type="text" id="collagename" name="collagename" placeholder="Enter Institution"><br>
+                      <label for="startyear">Select Start year</label>
+                      <input type="date" id="startyear" name="startyear"><br>
+                      <label for="endyear">Select End year</label>
+                      <input type="date" id="endyear" name="endyear"><br>
+                      <label for="percentage">Enter Percentage</label>
+                      <input type="number" id="percentage" name="percentage" placeholder="Enter Percentage"><br>
+                      <button onclick="toggleCardEdit(this)">Edit</button>
+                    </div>
+                    <div id="education-container"></div>
+                    <center><button id="addEducationButton" onclick="addEducation()">Add Education</button></center>
+                  </div>
+            </center>
+        </main>
+        <footer>
+            &copy; 2025 Student Career Hub | All Rights Reserved
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
