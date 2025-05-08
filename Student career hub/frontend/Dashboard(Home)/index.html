@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Career Hub</title>
+  <link href="style.css" rel="stylesheet">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+
+    .wrapper {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    main {
+      flex: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <header>
+      <div class="head">
+        <img src="logo.png" alt="Logo" class="logo">
+        <span>Student Career Hub</span>
+      </div>
+      <nav class="nav">
+        <a href="#" class="logout">Logout</a>
+      </nav>
+    </header>
+
+    <main>
+      <div class="Welcome">
+        <h1 style="padding-top: 50px;">Welcome to your Student Dashboard</h1>
+        <p>"The future belongs to those who believe in the beauty of their dreams." - Eleanor Roosevelt</p>
+      </div>
+
+      <div class="card-container">
+        <div class="card">
+          <img src="profile.jpg">
+          <div class="container">
+            <h4><b>Profile</b></h4>
+            <p>Update your details</p>
+            <p>Manage Preferences</p>
+            <button onclick="profile()">Go to profile</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <img src="job.jpg">
+          <div class="container">
+            <h4><b>Jobs</b></h4>
+            <p>Explore new roles</p>
+            <p>Filter by skills</p>
+            <button>Find jobs</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <img src="Application.jpg">
+          <div class="container">
+            <h4><b>Applications</b></h4>
+            <p>Track your progress</p>
+            <p>View submitted forms</p>
+            <button>View Applications</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      &copy; 2025 Student Career Hub | All Rights Reserved
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
