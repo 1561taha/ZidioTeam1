@@ -28,4 +28,10 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
+    @Column(nullable = true)
+    private String verificationToken;
+
+    @Column(nullable = false)
+    private boolean isVerified = false;
+
 }
