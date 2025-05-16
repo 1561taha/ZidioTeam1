@@ -1,35 +1,35 @@
+// src/App.js
 import React, { useContext } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthContext } from "./contexts/AuthContext";
 
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import LoginForm from "./components/LoginForm";
+import ProtectedRoute from "./components/ProtectedRoute";
+
+import Login from "./components/LoginForm";
 import Register from "./components/Register";
 import VerifyEmail from "./components/VerifyEmail";
 import Profile from "./components/Profile";
 import StudentProfile from "./components/StudentProfile";
 import StudentDashboard from "./components/StudentDashboard";
 import RecruiterDashboard from "./components/RecruiterDashboard";
-import ProtectedRoute from "./components/ProtectedRoute";
 
 import "./App.css";
 
-export default function App() {
+function App() {
   const { user } = useContext(AuthContext);
 
   return (
     <div className="app">
-      {/* This Header lives inside the single Router from index.js */}
       <Header />
 
       <main className="main-content">
-        {/* Use only Routes here—no additional Router */}
         <Routes>
-          {/* Public routes */}
+          {/* Public */}
           <Route
             path="/login"
-            element={user ? <Navigate to="/student-dashboard" /> : <LoginForm />}
+            element={user ? <Navigate to="/student-dashboard" /> : <Login />}
           />
           <Route
             path="/register"
@@ -74,3 +74,5 @@ export default function App() {
     </div>
   );
 }
+
+export default App;
