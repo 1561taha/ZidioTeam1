@@ -10,7 +10,10 @@ import StudentDashboard from "./components/StudentDashboard";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
+import RecruiterDashboard from "./components/RecruiterDashboard";
 import "./App.css";
+import RecruiterProfile from "./components/RecruiterProfile";
+import ViewProfile from "./components/ViewProfile";
 
 function App() {
   return (
@@ -33,6 +36,9 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route path="/recruiter-dashboard" element={<RecruiterDashboard />} />
+            <Route path="/recruiter-profile" element={<RecruiterProfile />} />
+            <Route path="/view-profile" element={<ViewProfile />} />
             <Route path="/" element={<Login />} />
           </Routes>
         </main>
