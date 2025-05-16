@@ -43,6 +43,7 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(request -> request
             .requestMatchers("/user/**").permitAll()
+                .requestMatchers("/recruiter/profile/**").hasRole("Recruiter")
             .anyRequest().authenticated())
         .httpBasic(Customizer.withDefaults())
         .sessionManagement(session -> session

@@ -2,12 +2,15 @@ package com.ZidioConnect.ZidioConnect.Controller;
 
 import com.ZidioConnect.ZidioConnect.Model.RegisterDto;
 
+import com.ZidioConnect.ZidioConnect.Model.Response;
+import com.ZidioConnect.ZidioConnect.Model.Role;
 import com.ZidioConnect.ZidioConnect.Model.User;
 import com.ZidioConnect.ZidioConnect.Repo.UserRepo;
 import com.ZidioConnect.ZidioConnect.Service.EmailService;
 import com.ZidioConnect.ZidioConnect.Service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -37,23 +40,37 @@ public class UserController {
         emailService.sendVerificationEmail(user.getEmail(), token);
         return ResponseEntity.ok("Registration successful. Please check your email to verify your account.");
     }
-
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody User user) {
+    public ResponseEntity<Response> login(@RequestBody User user) {
         Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
+                new UsernamePasswordAuthenticationToken(
+                        user.getUsername(),
+                        user.getPassword()
+                )
         );
 
-        User loggedInUser = userRepo.findByUsername(user.getUsername());
-        if (!loggedInUser.isVerified()) {
-            return ResponseEntity.badRequest().body("Email not verified");
+        if (!authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        if (authentication.isAuthenticated()) {
-            return ResponseEntity.ok("Login successful");
-        } else {
-            return ResponseEntity.badRequest().build();
+        User loggedInUser = userRepo.findByUsername(user.getUsername());
+        if (loggedInUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+        if (!loggedInUser.isVerified()) {
+            return ResponseEntity.badRequest()
+                    .body(new Response("Email not verified"));
+        }
+
+        // Check if the role matches
+        if (user.getRole() != null && !loggedInUser.getRole().toString().equals(user.getRole().toString())) {
+            return ResponseEntity.badRequest()
+                    .body(new Response("Incorrect role for this user."));
+        }
+
+        Role role = loggedInUser.getRole();  // e.g. "ROLE_Student" or "ROLE_Recruiter"
+        Response response = new Response(role.toString());
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/verify")

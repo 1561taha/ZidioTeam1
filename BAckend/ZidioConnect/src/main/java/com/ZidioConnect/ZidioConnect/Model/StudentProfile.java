@@ -6,46 +6,68 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "student_profiles",
+        uniqueConstraints = @UniqueConstraint(columnNames = "user_id"))
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class StudentProfile {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false )
-    private String name;
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    private User user;
 
-    @Column(nullable = false, unique = true)
-    private String email;
+    @Column(name = "full_name", nullable = false)
+    private String fullName;
 
-    @Column(nullable = false)
-    private String password;
+    @Column(name = "phone_number")
+    private String phoneNumber;
 
-    @Column(nullable = false, unique = true)
-    private String phone;
+    @Column(name = "location")
+    private String location;
 
-    @Column(nullable = false)
-    private String CITY;
+    @ElementCollection
+    @CollectionTable(name = "student_skills", joinColumns = @JoinColumn(name = "student_profile_id"))
+    @Column(name = "skill")
+    private List<String> skills = new ArrayList<>();
 
-    @Column(nullable = false)
-    private String education;
+    @ElementCollection
+    @CollectionTable(name = "student_interests", joinColumns = @JoinColumn(name = "student_profile_id"))
+    @Column(name = "interest")
+    private List<String> interests = new ArrayList<>();
 
-    @Column(nullable = false)
+    @ElementCollection
+    @CollectionTable(name = "student_education", joinColumns = @JoinColumn(name = "student_profile_id"))
+    @Column(name = "education_entry")
+    private List<String> education = new ArrayList<>();
 
-    private List<String> skills;
+    @ElementCollection
+    @CollectionTable(name = "student_certifications", joinColumns = @JoinColumn(name = "student_profile_id"))
+    @Column(name = "certification")
+    private List<String> certifications = new ArrayList<>();
 
-    private String experience;
+    @ElementCollection
+    @CollectionTable(name = "student_projects", joinColumns = @JoinColumn(name = "student_profile_id"))
+    @Column(name = "project")
+    private List<String> projects = new ArrayList<>();
 
-    private String resumeLink;
+    @ElementCollection
+    @CollectionTable(name = "student_work_experience", joinColumns = @JoinColumn(name = "student_profile_id"))
+    @Column(name = "work_experience_entry")
+    private List<String> workExperience = new ArrayList<>();
 
-    // Add any other fields you need for the student profile
+    @Column(name = "resume_url")
+    private String resumeUrl;
 
-
-
+    @Column(name = "photo_url")
+    private String photoUrl;
 }
+
 

@@ -1,24 +1,53 @@
-import React, { useState } from "react";
+// src/components/LoginForm.jsx
+
+import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { login } from "../services/authservice";
+import { login as loginService } from "../services/authservice";
+import { AuthContext } from "../contexts/AuthContext";
 import "./LoginForm.css";
 
-export default function Login() {
+export default function LoginForm() {
   const [form, setForm] = useState({ username: "", password: "" });
+  const [role, setRole] = useState("ROLE_Student");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+
+  // grab `login()` from context
+  const { login } = useContext(AuthContext);
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
+  const handleRoleChange = (e) => setRole(e.target.value);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const resp = await login(form); // your login API call
-      localStorage.setItem("token", resp.token); // save token
-      navigate("/student-dashboard"); // redirect
+      // 1) Call your existing auth service
+      const resp = await loginService({ ...form, role });
+
+      // 2) Write token + user into context (and localStorage inside context)
+      login({
+        token: resp.token,
+        userObj: {
+          name: resp.username || form.username,
+          role: resp.role,
+        },
+      });
+
+      // 3) Navigate based on role
+      if (resp.role === "ROLE_Student") {
+        navigate("/student-dashboard");
+      } else if (resp.role === "ROLE_Recruiter") {
+        navigate("/recruiter-dashboard");
+      } else {
+        navigate("/");
+      }
     } catch (err) {
-      setMessage("Login failed. Please check your credentials.");
+      setMessage(
+        err?.response?.data?.message ||
+          "Login failed. Please check your credentials and role."
+      );
     }
   };
 
@@ -27,6 +56,30 @@ export default function Login() {
       <div className="login-container">
         <h2>Welcome to ZidioConnect</h2>
         <form onSubmit={handleSubmit}>
+          <label>Login as</label>
+          <div className="role-select">
+            <label>
+              <input
+                type="radio"
+                name="role"
+                value="ROLE_Student"
+                checked={role === "ROLE_Student"}
+                onChange={handleRoleChange}
+              />
+              Student
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="role"
+                value="ROLE_Recruiter"
+                checked={role === "ROLE_Recruiter"}
+                onChange={handleRoleChange}
+              />
+              Recruiter
+            </label>
+          </div>
+
           <label>Username</label>
           <input
             type="text"
@@ -36,6 +89,7 @@ export default function Login() {
             onChange={handleChange}
             required
           />
+
           <label>Password</label>
           <input
             type="password"
@@ -45,14 +99,23 @@ export default function Login() {
             onChange={handleChange}
             required
           />
+
           <div className="login-btn-wrapper">
-            <button type="submit" className="login-btn">Login</button>
+            <button type="submit" className="login-btn">
+              Login
+            </button>
           </div>
         </form>
+
+        {message && <div className="login-error">{message}</div>}
+
         <div className="login-links">
           <a href="#">Forgot Password?</a>
-          <Link to="/register" className="register-link">Register</Link>
+          <Link to="/register" className="register-link">
+            Register
+          </Link>
         </div>
+
         <div className="login-or">Or login with</div>
         <div className="login-socials">
           <i className="fab fa-facebook-f"></i>
