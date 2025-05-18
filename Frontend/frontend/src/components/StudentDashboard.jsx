@@ -1,72 +1,147 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./StudentDashboard.css";
-import logo from "../assets/logo.png";          // ensure this asset exists
-import profileImg from "../assets/profile.jpg";  // imported image for profile
-import jobImg from "../assets/job.jpg";          // imported image for jobs
-import applicationImg from "../assets/Application.jpg";  // imported image for applications
+import logo from "../assets/logo.png";
+import profileImg from "../assets/profile.jpg";
 
 export default function StudentDashboard() {
   const navigate = useNavigate();
 
-  const handleProfileManagementClick = () => {
-    navigate("/student-profile");
-  };
+  // Dummy data for demonstration
+  const status = [
+    { label: "Applied", value: 12 },
+    { label: "In Review", value: 5 },
+    { label: "Shortlisted", value: 3 },
+    { label: "Rejected", value: 2 },
+  ];
 
-  const handleLogout = () => {
-    if (window.confirm("Are you sure you want to logout?")) {
-      localStorage.removeItem("token");
-      navigate("/login");
-    }
-  };
+  const recentApplications = [
+    {
+      title: "Software Developer Intern",
+      company: "TechCorp Inc.",
+      date: "May 10, 2025",
+      status: "In Review",
+    },
+    {
+      title: "Frontend Developer",
+      company: "WebSolutions Ltd.",
+      date: "May 8, 2025",
+      status: "Shortlisted",
+    },
+  ];
 
   return (
-    <div className="student-dashboard">
-      <header className="dashboard-header">
-        <div className="head">
-          <img src={logo} alt="Logo" className="logo" />
-          <span>Student Career Hub</span>
-        </div>
-        <button className="logout-btn" onClick={handleLogout}>Logout</button>
-      </header>
-      <div className="welcome">
-        <h1 style={{ paddingTop: "50px" }}>Welcome to your Student Dashboard</h1>
-        <p>
-          "The future belongs to those who believe in the beauty of their dreams." - Eleanor Roosevelt
-        </p>
+    <div className="dashboard-root">
+      {/* Main Content */}
+      <div className="dashboard-content">
+        {/* Left Sidebar/Profile */}
+        <aside className="dashboard-sidebar">
+          <div className="profile-card">
+            <img
+              src={profileImg}
+              alt="Profile"
+              className="profile-img"
+            />
+            <div className="profile-info">
+              <div className="profile-name">John Doe</div>
+              <div className="profile-role">Computer Science Student</div>
+              <div className="profile-university">
+                University of Technology
+              </div>
+            </div>
+            <button
+              className="profile-edit-btn"
+              onClick={() => navigate("/student-profile")}
+            >
+              Edit Profile
+            </button>
+          </div>
+
+          <div className="resume-card">
+            <div className="resume-title">Resume</div>
+            <div className="resume-upload">
+              <label
+                htmlFor="resume-upload-input"
+                className="resume-upload-box"
+              >
+                <span
+                  role="img"
+                  aria-label="upload"
+                  className="resume-upload-icon"
+                >
+                  📤
+                </span>
+                <div>
+                  Drop your resume here or{" "}
+                  <span className="resume-browse">browse files</span>
+                </div>
+                <input
+                  id="resume-upload-input"
+                  type="file"
+                  style={{ display: "none" }}
+                />
+              </label>
+            </div>
+          </div>
+        </aside>
+
+        {/* Main Dashboard Area */}
+        <main className="dashboard-main">
+          {/* Application Status */}
+          <section className="dashboard-status">
+            <h2>Application Status</h2>
+            <div className="status-cards">
+              {status.map((s) => (
+                <div className="status-card" key={s.label}>
+                  <div className="status-value">{s.value}</div>
+                  <div className="status-label">{s.label}</div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Recent Applications */}
+          <section className="dashboard-recent">
+            <div className="recent-header">
+              <h2>Recent Applications</h2>
+              <button
+                className="recent-viewall-btn"
+                onClick={() => navigate("/applications")}
+              >
+                View All
+              </button>
+            </div>
+
+            <div className="recent-list">
+              {recentApplications.map((app, idx) => (
+                <div className="recent-card" key={idx}>
+                  <div>
+                    <div className="recent-title">{app.title}</div>
+                    <div className="recent-company">{app.company}</div>
+                    <div className="recent-date">
+                      Applied on: {app.date}
+                    </div>
+                  </div>
+                  <div
+                    className={`recent-status recent-status-${app.status
+                      .replace(/\s/g, "")
+                      .toLowerCase()}`}
+                  >
+                    {app.status}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Pagination (dummy) */}
+            <div className="recent-pagination">
+              <button disabled>{"<"}</button>
+              <span>2 / 4</span>
+              <button>{">"}</button>
+            </div>
+          </section>
+        </main>
       </div>
-      <div className="card-container">
-        <div className="card">
-          <img src={profileImg} alt="Profile" />
-          <div className="container">
-            <h4><b>Profile</b></h4>
-            <p>Update your details</p>
-            <p>Manage Preferences</p>
-            <button onClick={handleProfileManagementClick}>Go to profile</button>
-          </div>
-        </div>
-        <div className="card">
-          <img src={jobImg} alt="Jobs" />
-          <div className="container">
-            <h4><b>Jobs</b></h4>
-            <p>Explore new roles</p>
-            <p>Filter by skills</p>
-            <button>Find jobs</button>
-          </div>
-        </div>
-        <div className="card">
-          <img src={applicationImg} alt="Applications" />
-          <div className="container">
-            <h4><b>Applications</b></h4>
-            <p>Track your progress</p>
-            <p>View submitted forms</p>
-            <button>View Applications</button>
-          </div>
-        </div>
-      </div>
-      <footer>
-        &copy; 2025 Student Career Hub | All Rights Reserved
-      </footer>
     </div>
   );
 }

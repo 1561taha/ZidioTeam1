@@ -1,23 +1,29 @@
-import React from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { getRecruiterProfile } from "../services/recruiterProfileService";
 import "./RecruiterDashboard.css";
 import logo from "../assets/logo.png";
 import profileImg from "../assets/profile.jpg";
+import { AuthContext } from "../contexts/AuthContext";
 
 export default function RecruiterDashboard() {
   const navigate = useNavigate();
+  const { logout } = useContext(AuthContext);
+  const [profile, setProfile] = useState(null);
+
+  useEffect(() => {
+    getRecruiterProfile()
+      .then(res => setProfile(res.data))
+      .catch(() => setProfile(null));
+  }, []);
 
   const handleEditProfile = () => {
     navigate("/recruiter-profile");
   };
 
-  const handleViewProfile = () => {
-    navigate("/view-profile");
-  };
-
   const handleLogout = () => {
     if (window.confirm("Are you sure you want to logout?")) {
-      localStorage.removeItem("token");
+      logout();
       navigate("/login");
     }
   };
@@ -61,46 +67,68 @@ export default function RecruiterDashboard() {
 
   return (
     <div className="recruiter-dashboard">
-      <header className="dashboard-header">
-        <div className="header-left">
-          <img src={logo} alt="Logo" className="logo" />
-          <span className="brand">CareerConnect</span>
-        </div>
-        <nav className="dashboard-nav">
-          <a href="#">Dashboard</a>
-          <a href="#">Job Listings</a>
-          <a href="#">Internships</a>
-          <a href="#">Hackathon</a>
-          <a href="#">Courses</a>
-          <a href="#">Applications</a>
-          <a href="#">Company Profile</a>
-        </nav>
-        <div className="header-right">
-          <img src={profileImg} alt="Profile" className="profile-icon" />
-          <span className="company-name">TechCorp Inc.</span>
-          <button className="logout-btn" onClick={handleLogout}>
-            Logout
+      {/* Only one header, no upper header/profile */}
+      <header className="dashboard-header modern-dashboard-header">
+        <div className="dashboard-header-inner">
+          <div className="header-left">
+            <img src={logo} alt="Logo" className="logo" />
+            <span className="brand">CareerConnect</span>
+          </div>
+          <nav className="modern-dashboard-nav" id="main-nav">
+         
+            <a href="#">Jobs</a>
+            <a href="#">Internships</a>
+            <a href="#">Hackathon</a>
+            <a href="#">Courses</a>
+            <a href="#">Applications</a>
+          </nav>
+          <div className="header-right">
+            {/* Profile photo from backend */}
+            <img
+              src={profile?.photoUrl || profileImg}
+              alt="Profile"
+              className="profile-icon"
+            />
+            <span className="company-name">{profile?.companyName || "Company"}</span>
+            <button className="logout-btn" onClick={handleLogout}>
+              Logout
+            </button>
+          </div>
+          <button className="mobile-nav-toggle" onClick={() => {
+            document.getElementById('main-nav').classList.toggle('open');
+          }}>
+            <span>☰</span>
           </button>
         </div>
       </header>
       <div className="dashboard-content">
         <aside className="company-sidebar">
-          <h2>TechCorp Inc.</h2>
-          <div className="company-type">Technology Company</div>
+          {/* Profile photo in sidebar */}
+          <div className="sidebar-profile-img-container">
+            <img
+              src={profile?.photoUrl || profileImg}
+              alt="Profile"
+              className="sidebar-profile-img"
+            />
+          </div>
+          <h2>{profile?.companyName || "Company Name"}</h2>
+          <div className="company-type">{profile?.title || "Technology Company"}</div>
           <div className="profile-action-btns">
             <button className="edit-profile-btn" onClick={handleEditProfile}>
               Edit Company Profile
             </button>
-            <button className="view-profile-btn" onClick={handleViewProfile}>
+            <button
+              className="view-profile-btn"
+              type="button"
+              onClick={() => navigate("/company-profile")}
+            >
               View Profile
             </button>
           </div>
           <div className="company-details">
+      
             <div>
-              <span role="img" aria-label="location">📍</span> San Francisco, CA
-            </div>
-            <div>
-              <span role="img" aria-label="website">🌐</span> www.techcorp.com
+              <span role="img" aria-label="website">🌐</span> {profile?.website || "www.techcorp.com"}
             </div>
             <div>
               <span role="img" aria-label="employees">👥</span> 1000+ employees
@@ -159,7 +187,7 @@ export default function RecruiterDashboard() {
                 <img src={app.img} alt={app.name} className="recent-app-img" />
                 <div className="recent-app-info">
                   <div className="recent-app-name">{app.name}</div>
-                  <div className="recent-app-position">{app.position}</div>
+                  <div className="recent-app_position">{app.position}</div>
                   <div className="recent-app-date">Applied: {app.date}</div>
                 </div>
                 <div className="recent-app-actions">

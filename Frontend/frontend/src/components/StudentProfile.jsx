@@ -23,6 +23,9 @@ export default function StudentProfile() {
   const [profilePic, setProfilePic] = useState(defaultPic);
   const [resumeFileName, setResumeFileName] = useState("");
   const [educationDetails, setEducationDetails] = useState([]);
+  const [experienceDetails, setExperienceDetails] = useState([]);
+  const [skills, setSkills] = useState([]);
+  const [newSkill, setNewSkill] = useState("");
 
   const handleProfileChange = (e) =>
     setProfileData({ ...profileData, [e.target.name]: e.target.value });
@@ -75,6 +78,38 @@ export default function StudentProfile() {
     setEducationDetails(newEducations);
   };
 
+  const addExperience = () => {
+    setExperienceDetails([
+      ...experienceDetails,
+      { company: "", role: "", start: "", end: "", description: "", editMode: true },
+    ]);
+  };
+
+  const toggleExperienceEdit = (index) => {
+    const newExperiences = [...experienceDetails];
+    newExperiences[index].editMode = !newExperiences[index].editMode;
+    setExperienceDetails(newExperiences);
+  };
+
+  const handleExperienceChange = (index, field, value) => {
+    const newExperiences = [...experienceDetails];
+    newExperiences[index][field] = value;
+    setExperienceDetails(newExperiences);
+  };
+
+  const addSkill = () => {
+    if (newSkill.trim() !== "") {
+      setSkills([...skills, newSkill.trim()]);
+      setNewSkill("");
+    }
+  };
+
+  const removeSkill = (index) => {
+    const newSkills = [...skills];
+    newSkills.splice(index, 1);
+    setSkills(newSkills);
+  };
+
   const handleLogout = () => {
     if (window.confirm("Are you sure you want to logout?")) {
       localStorage.removeItem("token");
@@ -84,13 +119,13 @@ export default function StudentProfile() {
 
   return (
     <div className="student-profile-page">
-      <header className="dashboard-header">
+      {/* <header className="dashboard-header">
         <div className="head">
           <img src={defaultPic} alt="Logo" className="logo" />
           <span>Student Profile</span>
         </div>
         <button className="logout-btn" onClick={handleLogout}>Logout</button>
-      </header>
+      </header> */}
       <div className="container">
         <center>
           <h1 className="profileoverview">Profile Overview</h1>
@@ -271,6 +306,107 @@ export default function StudentProfile() {
                 Add Education
               </button>
             </center>
+          </div>
+
+          {/* Experience Section */}
+          <div className="experiencediv">
+            <h1 className="experiencedetails">Experience</h1>
+            {experienceDetails.map((exp, index) => (
+              <div key={index} className="experiencedetailsdiv">
+                <label>Company</label>
+                <input
+                  type="text"
+                  placeholder="Enter Company"
+                  value={exp.company}
+                  onChange={(e) =>
+                    handleExperienceChange(index, "company", e.target.value)
+                  }
+                  disabled={!exp.editMode}
+                />
+                <br />
+                <label>Role</label>
+                <input
+                  type="text"
+                  placeholder="Enter Role"
+                  value={exp.role}
+                  onChange={(e) =>
+                    handleExperienceChange(index, "role", e.target.value)
+                  }
+                  disabled={!exp.editMode}
+                />
+                <br />
+                <label>Start Date</label>
+                <input
+                  type="date"
+                  value={exp.start}
+                  onChange={(e) =>
+                    handleExperienceChange(index, "start", e.target.value)
+                  }
+                  disabled={!exp.editMode}
+                />
+                <br />
+                <label>End Date</label>
+                <input
+                  type="date"
+                  value={exp.end}
+                  onChange={(e) =>
+                    handleExperienceChange(index, "end", e.target.value)
+                  }
+                  disabled={!exp.editMode}
+                />
+                <br />
+                <label>Description</label>
+                <textarea
+                  placeholder="Describe your work"
+                  value={exp.description}
+                  onChange={(e) =>
+                    handleExperienceChange(index, "description", e.target.value)
+                  }
+                  disabled={!exp.editMode}
+                />
+                <br />
+                <button onClick={() => toggleExperienceEdit(index)}>
+                  {exp.editMode ? "Save" : "Edit"}
+                </button>
+              </div>
+            ))}
+            <center>
+              <button id="addExperienceButton" onClick={addExperience}>
+                Add Experience
+              </button>
+            </center>
+          </div>
+
+          {/* Skills Section */}
+          <div className="skillsdiv">
+            <h1 className="skillsdetails">Skills</h1>
+            <div className="skills-input">
+              <input
+                type="text"
+                placeholder="Add a skill"
+                value={newSkill}
+                onChange={(e) => setNewSkill(e.target.value)}
+                disabled={!editMode}
+              />
+              <button onClick={addSkill} disabled={!editMode}>
+                Add Skill
+              </button>
+            </div>
+            <ul className="skills-list">
+              {skills.map((skill, idx) => (
+                <li key={idx}>
+                  {skill}
+                  {editMode && (
+                    <button
+                      style={{ marginLeft: "10px" }}
+                      onClick={() => removeSkill(idx)}
+                    >
+                      Remove
+                    </button>
+                  )}
+                </li>
+              ))}
+            </ul>
           </div>
         </center>
       </div>

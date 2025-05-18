@@ -1,103 +1,130 @@
-.view-profile-page {
+/* Modern shared styles for both profile pages */
+
+/* Centered loading spinner/message */
+.centered-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 40vh;
+  font-size: 1.2rem;
+  color: #2563eb;
+  font-weight: 600;
+}
+
+/* Modern card and sidebar tweaks */
+.modern-profile-page,
+.modern-view-profile-page {
   display: flex;
   gap: 32px;
   background: #f5f8fc;
   min-height: 100vh;
   padding: 40px 0;
   justify-content: center;
+  font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
 }
 
-.profile-sidebar {
+.modern-profile-sidebar {
   width: 320px;
   min-width: 260px;
   display: flex;
   justify-content: flex-end;
 }
 
-.profile-card {
+.modern-profile-card {
   background: #fff;
-  border-radius: 8px;
-  padding: 32px 24px 24px 24px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border-radius: 14px;
+  padding: 36px 24px 28px 24px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.profile-img-container {
+.modern-profile-img-container {
   position: relative;
   margin-bottom: 18px;
 }
 
-.profile-img {
-  width: 110px;
-  height: 110px;
+.modern-profile-img {
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
   object-fit: cover;
   border: 4px solid #fff;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
-.upload-btn {
+.modern-upload-btn {
   position: absolute;
   bottom: 8px;
   right: 8px;
-  background: #fff;
-  border: 1px solid #e5e7eb;
+  background: #2563eb;
+  color: #fff;
+  border: none;
   border-radius: 50%;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: not-allowed;
-  font-size: 1.1rem;
+  cursor: pointer;
+  font-size: 1.2rem;
   box-shadow: 0 1px 4px rgba(0,0,0,0.07);
-}
-
-.upload-photo-btn {
-  background: #3b82f6;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 10px 0;
-  width: 100%;
-  font-weight: 600;
-  font-size: 1rem;
-  margin-bottom: 14px;
-  cursor: not-allowed;
   transition: background 0.2s;
 }
+.modern-upload-btn:hover {
+  background: #1746a2;
+}
 
-.upload-info {
-  background: #f3f4f6;
+.photo-uploading-spinner {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  width: 28px;
+  height: 28px;
+  border: 3px solid #2563eb;
+  border-top: 3px solid #fff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.modern-profile-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: #222;
+  text-align: center;
+}
+.modern-profile-username {
+  font-size: 1.05rem;
   color: #6b7280;
-  font-size: 0.98rem;
-  border-radius: 6px;
-  padding: 10px 12px;
-  margin-bottom: 18px;
+  margin-bottom: 10px;
   text-align: center;
 }
 
-.profile-main {
+.modern-profile-main {
   background: #fff;
-  border-radius: 8px;
+  border-radius: 14px;
   flex: 1;
   min-width: 340px;
   padding: 36px 36px 32px 36px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
   display: flex;
   flex-direction: column;
 }
 
-.edit-profile-header {
+.modern-edit-profile-header {
   font-size: 1.5rem;
   font-weight: 700;
   margin-bottom: 18px;
+  color: #2563eb;
 }
 
-.profile-tabs {
+.modern-profile-tabs {
   display: flex;
   gap: 0;
   border-bottom: 1px solid #e5e7eb;
@@ -136,24 +163,26 @@
   font-weight: 700;
   border: none;
   border-bottom: 2.5px solid transparent;
-  cursor: not-allowed;
+  cursor: pointer;
 }
 
-.profile-view-form {
+.modern-profile-form,
+.modern-profile-view-form {
   display: flex;
   flex-direction: column;
   gap: 28px;
   margin-top: 10px;
 }
 
-.form-row {
+.modern-form-row {
   display: flex;
   gap: 32px;
   margin-bottom: 0;
   align-items: flex-start;
+  flex-wrap: wrap;
 }
 
-.form-group {
+.modern-form-group {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -161,13 +190,14 @@
   min-width: 0;
 }
 
-.form-group label {
+.modern-form-group label {
   font-weight: 500;
   color: #222;
   margin-bottom: 2px;
   font-size: 1.05rem;
 }
 
+.modern-profile-value,
 .profile-value {
   background: #f9fafb;
   border: 1.5px solid #d1d5db;
@@ -180,30 +210,53 @@
   word-break: break-word;
 }
 
-.profile-value a {
+.modern-profile-value a {
   color: #2563eb;
   text-decoration: underline;
 }
 
-.member-since-view {
-  color: #6b7280;
-  font-size: 1rem;
-  margin-top: 18px;
+.modern-update-info-btn {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 14px 0;
+  width: 100%;
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-top: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.modern-update-info-btn:hover {
+  background: #1746a2;
 }
 
+.modern-profile-message {
+  margin-top: 18px;
+  color: #2563eb;
+  font-weight: 600;
+  text-align: center;
+  background: #e0e7ff;
+  border-radius: 6px;
+  padding: 10px 0;
+}
+
+/* Responsive styles */
 @media (max-width: 1100px) {
-  .view-profile-page {
+  .modern-profile-page,
+  .modern-view-profile-page {
     flex-direction: column;
     align-items: center;
     gap: 24px;
     padding: 24px 0;
   }
-  .profile-sidebar {
+  .modern-profile-sidebar {
     width: 100%;
     justify-content: center;
     margin-bottom: 18px;
   }
-  .profile-main {
+  .modern-profile-main {
     min-width: 0;
     width: 100%;
     padding: 24px 10px 18px 10px;
@@ -211,17 +264,18 @@
 }
 
 @media (max-width: 700px) {
-  .view-profile-page {
+  .modern-profile-page,
+  .modern-view-profile-page {
     padding: 10px 0;
     gap: 12px;
   }
-  .profile-card {
+  .modern-profile-card {
     padding: 18px 6px 12px 6px;
   }
-  .profile-main {
+  .modern-profile-main {
     padding: 12px 2px 10px 2px;
   }
-  .form-row {
+  .modern-form-row {
     flex-direction: column;
     gap: 10px;
   }
