@@ -23,10 +23,7 @@ export default function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // 1) Call your existing auth service
       const resp = await loginService({ ...form, role });
-
-      // 2) Write token + user into context (and localStorage inside context)
       login({
         token: resp.token,
         userObj: {
@@ -34,19 +31,15 @@ export default function LoginForm() {
           role: resp.role,
         },
       });
-
-      // 3) Navigate based on role
       if (resp.role === "ROLE_Student") {
         navigate("/student-dashboard");
       } else if (resp.role === "ROLE_Recruiter") {
         navigate("/recruiter-dashboard");
-      } else {
-        navigate("/");
       }
     } catch (err) {
       setMessage(
         err?.response?.data?.message ||
-          "Login failed. Please check your credentials and role."
+        "Login failed. Please check your credentials and role."
       );
     }
   };

@@ -22,11 +22,12 @@ public class RecruiterProfile {
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
+    private String email;
 
     private String fullName;
     private String title;
 
-    @Column(nullable = false)
+
     private String companyName;
 
     private String companyDescription;

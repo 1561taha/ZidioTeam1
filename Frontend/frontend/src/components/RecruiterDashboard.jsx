@@ -1,64 +1,52 @@
-import React from "react";
-<<<<<<< HEAD
-import "./RecruiterDashboard.css";
-import companyLogo from "../assets/company.png"; // replace with your company logo asset
-
-export default function RecruiterDashboard() {
-  // Dummy data
-=======
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { getRecruiterProfile } from "../services/recruiterProfileService";
 import "./RecruiterDashboard.css";
 import logo from "../assets/logo.png";
 import profileImg from "../assets/profile.jpg";
+import { AuthContext } from "../contexts/AuthContext";
 
 export default function RecruiterDashboard() {
   const navigate = useNavigate();
+  const { logout } = useContext(AuthContext);
+  const [profile, setProfile] = useState(null);
+
+  useEffect(() => {
+    getRecruiterProfile()
+      .then(res => setProfile(res.data))
+      .catch(() => setProfile(null));
+  }, []);
 
   const handleEditProfile = () => {
     navigate("/recruiter-profile");
   };
 
-  const handleViewProfile = () => {
-    navigate("/view-profile");
-  };
-
   const handleLogout = () => {
     if (window.confirm("Are you sure you want to logout?")) {
-      localStorage.removeItem("token");
+      logout();
       navigate("/login");
     }
   };
 
->>>>>>> main
   const stats = [
     { label: "Total Applications", value: 45 },
     { label: "Shortlisted", value: 18 },
     { label: "Interviews", value: 12 },
     { label: "Hired", value: 8 },
   ];
-<<<<<<< HEAD
-=======
 
->>>>>>> main
   const jobs = [
     {
       title: "Senior Software Engineer",
       location: "Remote",
       type: "Full-time",
       applicants: 28,
-<<<<<<< HEAD
-      id: 1,
-=======
->>>>>>> main
     },
     {
       title: "Product Designer",
       location: "San Francisco",
       type: "Full-time",
       applicants: 15,
-<<<<<<< HEAD
-      id: 2,
-=======
     },
   ];
 
@@ -74,98 +62,73 @@ export default function RecruiterDashboard() {
       position: "Product Designer Position",
       date: "May 11, 2025",
       img: profileImg,
->>>>>>> main
     },
   ];
 
   return (
-<<<<<<< HEAD
-    <div className="recruiter-root">
-      {/* Top Navigation */}
-      <nav className="recruiter-nav">
-        <div className="nav-left">
-          <span className="nav-logo" role="img" aria-label="logo">💼</span>
-          <span className="nav-title">CareerConnect</span>
-        </div>
-        <div className="nav-links">
-          <a href="#">Dashboard</a>
-          <a href="#">Job Listings</a>
-          <a href="#">Applications</a>
-          <a href="#">Company Profile</a>
-        </div>
-        <div className="nav-profile">
-          <img src={companyLogo} alt="Company" className="nav-profile-img" />
-          <span className="nav-profile-name">TechCorp Inc.</span>
-          <span className="nav-bell" role="img" aria-label="notifications">🔔</span>
-        </div>
-      </nav>
-
-      <div className="recruiter-content">
-        {/* Sidebar */}
-        <aside className="recruiter-sidebar">
-          <div className="company-card">
-            <img src={companyLogo} alt="Company" className="company-img" />
-            <div className="company-info">
-              <div className="company-name">TechCorp Inc.</div>
-              <div className="company-type">Technology Company</div>
-            </div>
-            <button className="company-edit-btn">Edit Company Profile</button>
-            <div className="company-meta">
-              <div>
-                <span role="img" aria-label="location">📍</span> San Francisco, CA
-              </div>
-              <div>
-                <span role="img" aria-label="website">🌐</span> www.techcorp.com
-              </div>
-              <div>
-                <span role="img" aria-label="employees">👥</span> 1000+ employees
-              </div>
-            </div>
-          </div>
-          <div className="quick-actions">
-            <button className="quick-action-btn">+ Post New Job</button>
-=======
     <div className="recruiter-dashboard">
-      <header className="dashboard-header">
-        <div className="header-left">
-          <img src={logo} alt="Logo" className="logo" />
-          <span className="brand">CareerConnect</span>
-        </div>
-        <nav className="dashboard-nav">
-          <a href="#">Dashboard</a>
-          <a href="#">Job Listings</a>
-          <a href="#">Internships</a>
-          <a href="#">Hackathon</a>
-          <a href="#">Courses</a>
-          <a href="#">Applications</a>
-          <a href="#">Company Profile</a>
-        </nav>
-        <div className="header-right">
-          <img src={profileImg} alt="Profile" className="profile-icon" />
-          <span className="company-name">TechCorp Inc.</span>
-          <button className="logout-btn" onClick={handleLogout}>
-            Logout
+      {/* Only one header, no upper header/profile */}
+      <header className="dashboard-header modern-dashboard-header">
+        <div className="dashboard-header-inner">
+          <div className="header-left">
+            <img src={logo} alt="Logo" className="logo" />
+            <span className="brand">CareerConnect</span>
+          </div>
+          <nav className="modern-dashboard-nav" id="main-nav">
+         
+            <a href="#">Jobs</a>
+            <a href="#">Internships</a>
+            <a href="#">Hackathon</a>
+            <a href="#">Courses</a>
+            <a href="#">Applications</a>
+          </nav>
+          <div className="header-right">
+            {/* Profile photo from backend */}
+            <img
+              src={profile?.photoUrl || profileImg}
+              alt="Profile"
+              className="profile-icon"
+            />
+            <span className="company-name">{profile?.companyName || "Company"}</span>
+            <button className="logout-btn" onClick={handleLogout}>
+              Logout
+            </button>
+          </div>
+          <button className="mobile-nav-toggle" onClick={() => {
+            document.getElementById('main-nav').classList.toggle('open');
+          }}>
+            <span>☰</span>
           </button>
         </div>
       </header>
       <div className="dashboard-content">
         <aside className="company-sidebar">
-          <h2>TechCorp Inc.</h2>
-          <div className="company-type">Technology Company</div>
+          {/* Profile photo in sidebar */}
+          <div className="sidebar-profile-img-container">
+            <img
+              src={profile?.photoUrl || profileImg}
+              alt="Profile"
+              className="sidebar-profile-img"
+            />
+          </div>
+          <h2>{profile?.companyName || "Company Name"}</h2>
+          <div className="company-type">{profile?.title || "Technology Company"}</div>
           <div className="profile-action-btns">
             <button className="edit-profile-btn" onClick={handleEditProfile}>
               Edit Company Profile
             </button>
-            <button className="view-profile-btn" onClick={handleViewProfile}>
+            <button
+              className="view-profile-btn"
+              type="button"
+              onClick={() => navigate("/company-profile")}
+            >
               View Profile
             </button>
           </div>
           <div className="company-details">
+      
             <div>
-              <span role="img" aria-label="location">📍</span> San Francisco, CA
-            </div>
-            <div>
-              <span role="img" aria-label="website">🌐</span> www.techcorp.com
+              <span role="img" aria-label="website">🌐</span> {profile?.website || "www.techcorp.com"}
             </div>
             <div>
               <span role="img" aria-label="employees">👥</span> 1000+ employees
@@ -177,25 +140,11 @@ export default function RecruiterDashboard() {
             <button className="quick-action-btn">+ Post New Internship</button>
             <button className="quick-action-btn">+ Post New Hackathon</button>
             <button className="quick-action-btn">+ Post New Courses</button>
->>>>>>> main
             <button className="quick-action-btn secondary">
               <span role="img" aria-label="export">📄</span> Export Reports
             </button>
           </div>
         </aside>
-<<<<<<< HEAD
-
-        {/* Main Dashboard */}
-        <main className="recruiter-main">
-          {/* Application Stats */}
-          <section className="recruiter-stats">
-            <h2>Application Statistics</h2>
-            <div className="stats-cards">
-              {stats.map((s) => (
-                <div className="stats-card" key={s.label}>
-                  <div className="stats-value">{s.value}</div>
-                  <div className="stats-label">{s.label}</div>
-=======
         <main className="company-main">
           <section className="application-stats">
             <h3>Application Statistics</h3>
@@ -204,41 +153,10 @@ export default function RecruiterDashboard() {
                 <div className="stat-card" key={stat.label}>
                   <div className="stat-value">{stat.value}</div>
                   <div className="stat-label">{stat.label}</div>
->>>>>>> main
                 </div>
               ))}
             </div>
           </section>
-<<<<<<< HEAD
-
-          {/* Active Job Listings */}
-          <section className="recruiter-jobs">
-            <div className="jobs-header">
-              <h2>Active Job Listings</h2>
-              <a href="#" className="jobs-viewall">View All</a>
-            </div>
-            <div className="jobs-list">
-              {jobs.map((job) => (
-                <div className="job-card" key={job.id}>
-                  <div className="job-info">
-                    <div className="job-title">{job.title}</div>
-                    <div className="job-meta">
-                      <span>📍 {job.location}</span>
-                      <span>💼 {job.type}</span>
-                      <span>👥 {job.applicants} applicants</span>
-                    </div>
-                  </div>
-                  <div className="job-actions">
-                    <button className="job-edit-btn">Edit</button>
-                    <button className="job-close-btn">Close</button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        </main>
-      </div>
-=======
           <section className="active-jobs">
             <div className="active-jobs-header">
               <h3>Active Job Listings</h3>
@@ -269,7 +187,7 @@ export default function RecruiterDashboard() {
                 <img src={app.img} alt={app.name} className="recent-app-img" />
                 <div className="recent-app-info">
                   <div className="recent-app-name">{app.name}</div>
-                  <div className="recent-app-position">{app.position}</div>
+                  <div className="recent-app_position">{app.position}</div>
                   <div className="recent-app-date">Applied: {app.date}</div>
                 </div>
                 <div className="recent-app-actions">
@@ -309,7 +227,6 @@ export default function RecruiterDashboard() {
         </div>
         <div className="footer-bottom-bar"></div>
       </footer>
->>>>>>> main
     </div>
   );
 }

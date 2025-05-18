@@ -1,26 +1,33 @@
 // src/contexts/AuthContext.js
 import React, { createContext, useState, useEffect } from "react";
 
-export const AuthContext = createContext(null);
+export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("user"));
-    if (stored) setUser(stored);
+    // On mount, check localStorage for token/user
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+    const name = localStorage.getItem("name");
+    if (token && role) {
+      setUser({ token, role, name });
+    }
   }, []);
 
   const login = ({ token, userObj }) => {
-    localStorage.setItem("token", token);
-    localStorage.setItem("user", JSON.stringify(userObj));
     setUser(userObj);
+    localStorage.setItem("token", token);
+    localStorage.setItem("role", userObj.role);
+    localStorage.setItem("name", userObj.name);
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
     setUser(null);
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("name");
   };
 
   return (

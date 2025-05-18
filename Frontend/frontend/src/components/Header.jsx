@@ -29,8 +29,10 @@ export default function Header() {
   }, [navigate]);
 
   const handleLogout = () => {
-    logout();
-    navigate("/login");
+    if (window.confirm("Are you sure you want to logout?")) {
+      logout();
+      navigate("/login");
+    }
   };
 
   return (

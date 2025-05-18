@@ -1,5 +1,6 @@
 package com.ZidioConnect.ZidioConnect.Config;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +17,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 import com.ZidioConnect.ZidioConnect.Service.MyUserDetailservice;
+import org.springframework.web.cors.CorsConfiguration;
+
+import java.util.List;
 
 @EnableWebSecurity
 @Configuration
@@ -40,6 +44,17 @@ public class SecurityConfig {
  @Bean
 public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     return http
+            .cors(cors -> cors
+                    .configurationSource(request -> {
+                        CorsConfiguration config = new CorsConfiguration();
+                        config.setAllowedOrigins(List.of("http://localhost:3000"));
+                        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                        config.setAllowedHeaders(List.of("*"));
+                        config.setAllowCredentials(true);
+                        return config;
+                    })
+            )
+//        .cors(Customizer.withDefaults())
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(request -> request
             .requestMatchers("/user/**").permitAll()
@@ -47,7 +62,7 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
             .anyRequest().authenticated())
         .httpBasic(Customizer.withDefaults())
         .sessionManagement(session -> session
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
         .logout(logout -> logout
             .logoutUrl("/user/logout")
             .deleteCookies("JSESSIONID")
@@ -58,8 +73,8 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
             }))
         .exceptionHandling(exception -> exception
             .authenticationEntryPoint((request, response, authException) -> {
-                response.setStatus(401);
-                response.getWriter().write("Unauthorized");
+                System.out.println("AUTH ENTRY POINT: " + authException.getMessage());
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
             })
             .accessDeniedHandler((request, response, accessDeniedException) -> {
                 response.setStatus(403);
@@ -80,7 +95,9 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
         }
 
      }
-    }
-
     
+
+}
+
+
 

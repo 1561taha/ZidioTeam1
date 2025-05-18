@@ -45,8 +45,9 @@ public class RecruiterProfileService {
             throw new DataIntegrityViolationException("Profile already exists for this user");
         }
 
-        dto.setId(null);
+        dto.setEmail(user.getEmail());
         dto.setUser(user);
+
         return profileRepo.save(dto);
     }
 

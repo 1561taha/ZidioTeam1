@@ -18,6 +18,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/recruiter/profile")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 //@PreAuthorize("hasRole('RECRUITER')")
 public class RecruiterProfileController {
 
@@ -26,6 +27,7 @@ public class RecruiterProfileController {
     /** GET /api/recruiter/profile */
     @GetMapping
     public ResponseEntity<RecruiterProfile> getProfile(Principal principal) {
+         System.out.println("Principal: " + principal);
         RecruiterProfile profile =
                 profileService.getProfileForCurrentUser(principal.getName());
         return ResponseEntity.ok(profile);
@@ -64,19 +66,11 @@ public class RecruiterProfileController {
      * POST /api/recruiter/profile/photo
      * Upload or replace profile photo. Returns JSON { "photoUrl": "..." }.
      */
-    @PutMapping("/update")
-    public ResponseEntity<RecruiterProfile> updateProfile(
+    @PostMapping("/photo")
+    public ResponseEntity<Map<String, String>> uploadPhoto(
             Principal principal,
-            @Valid @RequestBody RecruiterProfileDto dto) {
-        RecruiterProfile updates = RecruiterProfile.builder()
-                .companyName(dto.getCompanyName())
-                .website(dto.getWebsite())
-                .contactNumber(dto.getContactNumber())
-                .fullName(dto.getFullName())
-                .companyDescription(dto.getCompanyDescription())
-                .photoUrl(dto.getPhotoUrl())
-                .build();
-        RecruiterProfile updated = profileService.updateProfile(principal.getName(), updates);
-        return ResponseEntity.ok(updated);
+            @RequestParam("photo") MultipartFile file) {
+        String url = profileService.uploadProfilePhoto(principal.getName(), file);
+        return ResponseEntity.ok(Collections.singletonMap("photoUrl", url));
     }
 }
