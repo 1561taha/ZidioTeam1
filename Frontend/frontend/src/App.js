@@ -7,7 +7,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./components/LoginForm";
 import Register from "./components/Register";
 import VerifyEmail from "./components/VerifyEmail";
-import Profile from "./components/Profile";
+
 import StudentProfile from "./components/StudentProfile";
 import StudentDashboard from "./components/StudentDashboard";
 import RecruiterDashboard from "./components/RecruiterDashboard";
@@ -15,6 +15,11 @@ import RecruiterProfile from "./components/RecruiterProfile";
 
 import CompanyProfile from "./components/CompanyProfile";
 import "./App.css";
+import JobPost from "./components/JobPost";
+import InternshipPost from "./components/InternshipPost";
+import HackathonPost from "./components/HackathonPost";
+import CoursePost from "./components/CoursePost";
+import ManageJob from "./components/ManageJob";
 
 function App() {
   const { user } = useContext(AuthContext);
@@ -40,9 +45,14 @@ function App() {
           <Route path="/recruiter-profile" element={<ProtectedRoute role="ROLE_Recruiter"><RecruiterProfile /></ProtectedRoute>} />
 
           {/* Shared/other routes */}
-          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          
           <Route path="/view-profile" element={<ProtectedRoute><CompanyProfile/></ProtectedRoute>} />
           <Route path="/company-profile" element={<CompanyProfile />} />
+          <Route path="/job-post" element={<JobPost />} />
+          <Route path="/manage-job" element={<ManageJob />} />
+          <Route path="/internship-post" element={<InternshipPost />} />
+          <Route path="/hackathon-post" element={<HackathonPost />} />
+          <Route path="/course-post" element={<CoursePost />} />
 
           {/* Fallback */}
           <Route path="*" element={<Navigate to={user ? (user.role === "ROLE_Student" ? "/student-dashboard" : "/recruiter-dashboard") : "/login"} />} />

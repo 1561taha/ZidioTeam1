@@ -136,10 +136,30 @@ export default function RecruiterDashboard() {
           </div>
           <div className="quick-actions">
             <div className="quick-actions-title">Quick Actions</div>
-            <button className="quick-action-btn">+ Post New Job</button>
-            <button className="quick-action-btn">+ Post New Internship</button>
-            <button className="quick-action-btn">+ Post New Hackathon</button>
-            <button className="quick-action-btn">+ Post New Courses</button>
+            <button
+              className="quick-action-btn"
+              onClick={() => navigate("/job-post")}
+            >
+              + Post New Job
+            </button>
+            <button
+              className="quick-action-btn"
+              onClick={() => navigate("/internship-post")}
+            >
+              + Post New Internship
+            </button>
+            <button
+              className="quick-action-btn"
+              onClick={() => navigate("/hackathon-post")}
+            >
+              + Post New Hackathon
+            </button>
+            <button
+              className="quick-action-btn"
+              onClick={() => navigate("/course-post")}
+            >
+              + Post New Courses
+            </button>
             <button className="quick-action-btn secondary">
               <span role="img" aria-label="export">📄</span> Export Reports
             </button>
@@ -160,7 +180,16 @@ export default function RecruiterDashboard() {
           <section className="active-jobs">
             <div className="active-jobs-header">
               <h3>Active Job Listings</h3>
-              <a href="#" className="view-all-link">View All</a>
+              <a
+                href="#"
+                className="view-all-link"
+                onClick={e => {
+                  e.preventDefault();
+                  navigate("/manage-job");
+                }}
+              >
+                View All
+              </a>
             </div>
             {jobs.map((job, idx) => (
               <div className="job-card" key={idx}>

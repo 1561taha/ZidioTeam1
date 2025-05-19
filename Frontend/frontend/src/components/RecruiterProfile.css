@@ -124,6 +124,8 @@
   color: #2563eb;
 }
 
+
+
 .modern-profile-tabs {
   display: flex;
   gap: 0;
@@ -144,6 +146,7 @@
   cursor: pointer;
   transition: color 0.2s, border-color 0.2s;
   outline: none;
+  height: auto;
 }
 
 .profile-tab.active,
