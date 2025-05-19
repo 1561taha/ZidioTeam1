@@ -1,0 +1,204 @@
+/* JobPost.css */
+.job-post-container {
+  min-height: 100vh;
+  background: #f5f8fc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.job-post-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  padding: 36px 40px 32px 40px;
+  width: 100%;
+  max-width: 600px;
+}
+
+.job-post-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 28px;
+  color: #22223b;
+  text-align: center;
+}
+
+.job-post-form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.form-row {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 0;
+  align-items: flex-start;
+}
+
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.form-group label {
+  font-weight: 500;
+  color: #22223b;
+  margin-bottom: 2px;
+  font-size: 1.05rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 12px 14px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 7px;
+  font-size: 1.05rem;
+  background: #f9fafb;
+  transition: border 0.2s;
+  margin-bottom: 0;
+  width: 100%;
+  box-sizing: border-box;
+  display: block;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border: 1.5px solid #2563eb;
+  outline: none;
+  background: #fff;
+}
+
+.form-group textarea {
+  min-height: 48px;
+  resize: vertical;
+}
+
+/* Ensure all single fields are full width and aligned */
+.job-post-form > .form-group {
+  width: 100%;
+}
+
+/* Align description, requirements, and application link side by side */
+@media (min-width: 700px) {
+  .job-post-form .description-row,
+  .job-post-form .requirements-row,
+  .job-post-form .applylink-row {
+    display: flex;
+    gap: 24px;
+  }
+  .job-post-form .description-row .form-group,
+  .job-post-form .requirements-row .form-group,
+  .job-post-form .applylink-row .form-group {
+    flex: 1;
+  }
+}
+
+/* For single column on mobile */
+@media (max-width: 700px) {
+  .job-post-card {
+    padding: 18px 4px 12px 4px;
+    max-width: 98vw;
+  }
+  .form-row,
+  .job-post-form .description-row,
+  .job-post-form .requirements-row,
+  .job-post-form .applylink-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+.job-post-btn {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  padding: 14px 0;
+  width: 100%;
+  font-weight: 700;
+  font-size: 1.08rem;
+  margin-top: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+  letter-spacing: 0.5px;
+  height: auto;
+}
+
+.job-post-btn:hover {
+  background: #1e40af;
+}
+
+.job-post-success {
+  margin-top: 16px;
+  color: #16a34a;
+  font-weight: 600;
+  text-align: center;
+  font-size: 1.08rem;
+}
+
+/* Responsive styles */
+@media (max-width: 800px) {
+  .job-post-card {
+    padding: 24px 10px 18px 10px;
+    max-width: 98vw;
+  }
+  .form-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+/* Responsive: stack fields on small screens */
+@media (max-width: 900px) {
+  .job-post-card {
+    padding: 18px 4px 12px 4px;
+    max-width: 98vw;
+  }
+  .form-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+/* Add spacing between rows for clarity */
+.form-row + .form-row,
+.form-row + .form-group,
+.form-group + .form-row,
+.form-group + .form-group {
+  margin-top: 0;
+}
+
+/* Center the tab above the form */
+.job-post-tabs {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  margin-bottom: 32px;
+  width: 100%;
+}
+
+.job-post-tab {
+  background: #2563eb;
+  color: #fff;
+  font-size: 1.18rem;
+  font-weight: 700;
+  padding: 14px 38px 10px 38px;
+  border: none;
+  border-radius: 12px 12px 0 0;
+  margin: 0;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+  position: relative;
+  z-index: 2;
+  cursor: default;
+  letter-spacing: 0.5px;
+  outline: none;
+  border-bottom: 2.5px solid #2563eb;
+}

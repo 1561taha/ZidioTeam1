@@ -1,0 +1,151 @@
+.internship-post-container {
+  min-height: 100vh;
+  background: #f5f8fc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.internship-post-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  padding: 36px 40px 32px 40px;
+  width: 100%;
+  max-width: 650px;
+}
+
+.internship-post-tabs {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  margin-bottom: 32px;
+  width: 100%;
+}
+
+.internship-post-tab {
+  background: #2563eb;
+  color: #fff;
+  font-size: 1.18rem;
+  font-weight: 700;
+  padding: 14px 38px 10px 38px;
+  border: none;
+  border-radius: 12px 12px 0 0;
+  margin: 0;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+  position: relative;
+  z-index: 2;
+  cursor: default;
+  letter-spacing: 0.5px;
+  outline: none;
+  border-bottom: 2.5px solid #2563eb;
+}
+
+.internship-post-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 28px;
+  color: #22223b;
+  text-align: center;
+}
+
+.internship-post-form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.internship-form-row {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 0;
+  align-items: flex-start;
+}
+
+.internship-form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.internship-form-group label {
+  font-weight: 500;
+  color: #22223b;
+  margin-bottom: 2px;
+  font-size: 1.05rem;
+}
+
+.internship-form-group input,
+.internship-form-group select,
+.internship-form-group textarea {
+  padding: 12px 14px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 7px;
+  font-size: 1.05rem;
+  background: #f9fafb;
+  transition: border 0.2s;
+  margin-bottom: 0;
+  width: 100%;
+  box-sizing: border-box;
+  display: block;
+}
+
+.internship-form-group input:focus,
+.internship-form-group select:focus,
+.internship-form-group textarea:focus {
+  border: 1.5px solid #2563eb;
+  outline: none;
+  background: #fff;
+}
+
+.internship-form-group textarea {
+  min-height: 48px;
+  resize: vertical;
+}
+
+/* Ensure all single fields are full width and aligned */
+.internship-post-form > .internship-form-group {
+  width: 100%;
+}
+
+/* Responsive: stack fields on small screens */
+@media (max-width: 900px) {
+  .internship-post-card {
+    padding: 18px 4px 12px 4px;
+    max-width: 98vw;
+  }
+  .internship-form-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+.internship-post-btn {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  padding: 14px 0;
+  width: 100%;
+  font-weight: 700;
+  font-size: 1.08rem;
+  margin-top: 10px;
+  transition: background 0.2s;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+}
+
+.internship-post-btn:hover {
+  background: #1e40af;
+}
+
+.internship-post-success {
+  margin-top: 16px;
+  color: #16a34a;
+  font-weight: 600;
+  text-align: center;
+  font-size: 1.08rem;
+}
