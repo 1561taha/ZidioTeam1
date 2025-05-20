@@ -7,12 +7,15 @@ import jakarta.validation.Valid;
 import org.springframework.aot.generate.GeneratedTypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("manage/job")
+@CrossOrigin(origins = "http://localhost:3000")
+@PreAuthorize("hasRole('RECRUITER')")
 public class JobController {
     @Autowired
     private JobService jobService;

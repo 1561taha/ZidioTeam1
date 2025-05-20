@@ -5,6 +5,7 @@ import com.ZidioConnect.ZidioConnect.Model.JobDto;
 import com.ZidioConnect.ZidioConnect.Model.User;
 import com.ZidioConnect.ZidioConnect.Repo.JobRepo;
 import com.ZidioConnect.ZidioConnect.Repo.RecruiterProfileRepository;
+import com.ZidioConnect.ZidioConnect.Repo.UserRepo;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +21,12 @@ public class JobService {
     private JobRepo jobRepo;
     @Autowired
     private RecruiterProfileRepository recruiterProfileRepository;
+    @Autowired
+    private UserRepo userRepo;
 
     public String getcurrentname (){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = recruiterProfileRepository.findByUsername(username);
+        User user = userRepo.findByUsername(username);
         String name = recruiterProfileRepository.findByUser(user)
                 .map(profile -> profile.getFullName())
                 .orElseThrow(() -> new RuntimeException("Recruiter profile not found"));

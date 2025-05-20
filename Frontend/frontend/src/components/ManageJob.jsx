@@ -1,59 +1,81 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import "./ManageJob.css";
 
 export default function ManageJob() {
-  // Example initial jobs (replace with API data in real app)
-  const [jobs, setJobs] = useState([
-    {
-      id: 1,
-      title: "Frontend Developer",
-      company: "Zidio Pvt Ltd",
-      location: "Remote",
-      type: "Full-time",
-      postedOn: "2025-05-19",
-    },
-    {
-      id: 2,
-      title: "Backend Developer",
-      company: "Zidio Pvt Ltd",
-      location: "Bangalore",
-      type: "Part-time",
-      postedOn: "2025-05-18",
-    },
-  ]);
-
-  // For update modal (simple example)
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [editingJob, setEditingJob] = useState(null);
   const [editTitle, setEditTitle] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+  const [viewJob, setViewJob] = useState(null);
+  const [error, setError] = useState("");
 
-  const handleView = (job) => {
-    alert(`Viewing job: ${job.title}`);
+  // Fetch jobs from backend
+  useEffect(() => {
+    fetchJobs();
+  }, []);
+
+  const fetchJobs = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get("/manage/job/all");
+      setJobs(res.data);
+    } catch (err) {
+      setError("Failed to load jobs.");
+    }
+    setLoading(false);
   };
 
-  const handleDelete = (id) => {
-    setJobs(jobs.filter((job) => job.id !== id));
+  const handleView = (job) => {
+    setViewJob(job);
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this job?")) return;
+    try {
+      await axios.delete(`/manage/job/${id}`);
+      setJobs(jobs.filter((job) => job.id !== id));
+    } catch (err) {
+      setError("Failed to delete job.");
+    }
   };
 
   const handleEdit = (job) => {
     setEditingJob(job);
     setEditTitle(job.title);
+    setEditDescription(job.description);
   };
 
-  const handleUpdate = () => {
-    setJobs(
-      jobs.map((job) =>
-        job.id === editingJob.id ? { ...job, title: editTitle } : job
-      )
-    );
-    setEditingJob(null);
-    setEditTitle("");
+  const handleUpdate = async () => {
+    try {
+      await axios.put(`/manage/job/${editingJob.id}`, {
+        ...editingJob,
+        title: editTitle,
+        description: editDescription,
+      });
+      setJobs(
+        jobs.map((job) =>
+          job.id === editingJob.id
+            ? { ...job, title: editTitle, description: editDescription }
+            : job
+        )
+      );
+      setEditingJob(null);
+      setEditTitle("");
+      setEditDescription("");
+    } catch (err) {
+      setError("Failed to update job.");
+    }
   };
 
   return (
     <div className="manage-job-container">
       <div className="manage-job-card">
         <h2 className="manage-job-title">Manage Posted Jobs</h2>
-        {jobs.length === 0 ? (
+        {loading ? (
+          <div className="no-jobs-msg">Loading...</div>
+        ) : jobs.length === 0 ? (
           <div className="no-jobs-msg">No jobs posted yet.</div>
         ) : (
           <div className="manage-job-list">
@@ -62,12 +84,12 @@ export default function ManageJob() {
                 <div className="manage-job-info">
                   <div className="manage-job-main">
                     <span className="manage-job-jobtitle">{job.title}</span>
-                    <span className="manage-job-company">{job.company}</span>
+                    <span className="manage-job-company">{job.companyName}</span>
                   </div>
                   <div className="manage-job-meta">
                     <span>📍 {job.location}</span>
-                    <span>• {job.type}</span>
-                    <span>• Posted: {job.postedOn}</span>
+                    <span>• {job.jobType}</span>
+                    <span>• Openings: {job.openings}</span>
                   </div>
                 </div>
                 <div className="manage-job-actions">
@@ -95,16 +117,47 @@ export default function ManageJob() {
           </div>
         )}
 
-        {/* Simple Update Modal */}
+        {/* View Modal */}
+        {viewJob && (
+          <div className="manage-job-modal" onClick={() => setViewJob(null)}>
+            <div className="manage-job-modal-content" onClick={(e) => e.stopPropagation()}>
+              <h3>{viewJob.title}</h3>
+              <div><b>Company:</b> {viewJob.companyName}</div>
+              <div><b>Description:</b> {viewJob.description}</div>
+              <div><b>Skills:</b> {viewJob.skills?.join(", ")}</div>
+              <div><b>Location:</b> {viewJob.location}</div>
+              <div><b>Type:</b> {viewJob.jobType}</div>
+              <div><b>Salary:</b> {viewJob.salaryRange}</div>
+              <div><b>Qualifications:</b> {viewJob.qualifications?.join(", ")}</div>
+              <div><b>Experience Level:</b> {viewJob.experienceLevel}</div>
+              <div><b>Openings:</b> {viewJob.openings}</div>
+              <div><b>Start:</b> {viewJob.startDate?.slice(0, 10)}</div>
+              <div><b>End:</b> {viewJob.endDate?.slice(0, 10)}</div>
+              <button className="manage-job-btn" onClick={() => setViewJob(null)}>
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Update Modal */}
         {editingJob && (
-          <div className="manage-job-modal">
-            <div className="manage-job-modal-content">
-              <h3>Update Job Title</h3>
+          <div className="manage-job-modal" onClick={() => setEditingJob(null)}>
+            <div className="manage-job-modal-content" onClick={(e) => e.stopPropagation()}>
+              <h3>Update Job</h3>
               <input
                 type="text"
                 value={editTitle}
                 onChange={(e) => setEditTitle(e.target.value)}
                 className="manage-job-modal-input"
+                placeholder="Job Title"
+              />
+              <textarea
+                value={editDescription}
+                onChange={(e) => setEditDescription(e.target.value)}
+                className="manage-job-modal-input"
+                placeholder="Description"
+                rows={4}
               />
               <div className="manage-job-modal-actions">
                 <button className="manage-job-btn update" onClick={handleUpdate}>
@@ -120,6 +173,7 @@ export default function ManageJob() {
             </div>
           </div>
         )}
+        {error && <div className="no-jobs-msg" style={{ color: "#ef4444" }}>{error}</div>}
       </div>
     </div>
   );
