@@ -6,7 +6,7 @@ import logo from "../assets/logo.png";
 import profileImg from "../assets/profile.jpg";
 import { AuthContext } from "../contexts/AuthContext";
 
-export default function RecruiterDashboard() {
+export default function RecruiterDashboard({ jobs = [], internships = [], hackathons = [], courses = [] }) {
   const navigate = useNavigate();
   const { logout } = useContext(AuthContext);
   const [profile, setProfile] = useState(null);
@@ -35,21 +35,6 @@ export default function RecruiterDashboard() {
     { label: "Hired", value: 8 },
   ];
 
-  const jobs = [
-    {
-      title: "Senior Software Engineer",
-      location: "Remote",
-      type: "Full-time",
-      applicants: 28,
-    },
-    {
-      title: "Product Designer",
-      location: "San Francisco",
-      type: "Full-time",
-      applicants: 15,
-    },
-  ];
-
   const recentApplications = [
     {
       name: "Sarah Johnson",
@@ -75,7 +60,6 @@ export default function RecruiterDashboard() {
             <span className="brand">CareerConnect</span>
           </div>
           <nav className="modern-dashboard-nav" id="main-nav">
-         
             <a href="#">Jobs</a>
             <a href="#">Internships</a>
             <a href="#">Hackathon</a>
@@ -126,7 +110,6 @@ export default function RecruiterDashboard() {
             </button>
           </div>
           <div className="company-details">
-      
             <div>
               <span role="img" aria-label="website">🌐</span> {profile?.website || "www.techcorp.com"}
             </div>
@@ -191,21 +174,167 @@ export default function RecruiterDashboard() {
                 View All
               </a>
             </div>
-            {jobs.map((job, idx) => (
-              <div className="job-card" key={idx}>
-                <div className="job-title">{job.title}</div>
-                <div className="job-meta">
-                  <span>📍 {job.location}</span>
-                  <span>• {job.type}</span>
-                  <span>• 👥 {job.applicants} applicants</span>
+            {jobs.length === 0 ? (
+              <div className="no-jobs-msg">No jobs posted yet.</div>
+            ) : (
+              jobs.map((job, idx) => (
+                <div className="job-card" key={job.id || idx}>
+                  <div className="job-title">{job.title}</div>
+                  <div className="job-meta">
+                    <span>📍 {job.location}</span>
+                    <span>• {job.type || job.jobType}</span>
+                    <span>• 👥 {job.applicants || 0} applicants</span>
+                  </div>
+                  <div className="job-actions">
+                    <button
+                      className="edit-btn"
+                      onClick={() => navigate(`/job-view/${job.id}`, { state: { job, readOnly: true } })}
+                    >
+                      View
+                    </button>
+                    <button
+                      className="close-btn"
+                      onClick={() => navigate(`/job-update/${job.id}`, { state: { job, isUpdate: true } })}
+                    >
+                      Update
+                    </button>
+                  </div>
                 </div>
-                <div className="job-actions">
-                  <button className="edit-btn">Edit</button>
-                  <button className="close-btn">Close</button>
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </section>
+          <section className="active-internships">
+            <div className="active-jobs-header">
+              <h3>Active Internship Listings</h3>
+              <a
+                href="#"
+                className="view-all-link"
+                onClick={e => {
+                  e.preventDefault();
+                  navigate("/manage-internship");
+                }}
+              >
+                View All
+              </a>
+            </div>
+            {internships.length === 0 ? (
+              <div className="no-jobs-msg">No internships posted yet.</div>
+            ) : (
+              internships.slice(0, 2).map((internship, idx) => (
+                <div className="job-card" key={internship.id || idx}>
+                  <div className="job-title">{internship.title}</div>
+                  <div className="job-meta">
+                    <span>📍 {internship.location}</span>
+                    <span>• {internship.internshipType}</span>
+                    <span>• 👥 {internship.openings} openings</span>
+                  </div>
+                  <div className="job-actions">
+                    <button
+                      className="edit-btn"
+                      onClick={() => navigate(`/internship-view/${internship.id}`, { state: { internship, readOnly: true } })}
+                    >
+                      View
+                    </button>
+                    <button
+                      className="close-btn"
+                      onClick={() => navigate(`/internship-update/${internship.id}`, { state: { internship, isUpdate: true } })}
+                    >
+                      Update
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </section>
+          {/* --- Add Active Hackathon Listings --- */}
+          <section className="active-hackathons">
+            <div className="active-jobs-header">
+              <h3>Active Hackathon Listings</h3>
+              <a
+                href="#"
+                className="view-all-link"
+                onClick={e => {
+                  e.preventDefault();
+                  navigate("/manage-hackathon");
+                }}
+              >
+                View All
+              </a>
+            </div>
+            {hackathons.length === 0 ? (
+              <div className="no-jobs-msg">No hackathons posted yet.</div>
+            ) : (
+              hackathons.map((hackathon, idx) => (
+                <div className="job-card" key={hackathon.id || idx}>
+                  <div className="job-title">{hackathon.title}</div>
+                  <div className="job-meta">
+                    <span>📍 {hackathon.location}</span>
+                    <span>• {hackathon.mode}</span>
+                    <span>• 🗓 {hackathon.startDate}</span>
+                  </div>
+                  <div className="job-actions">
+                    <button
+                      className="edit-btn"
+                      onClick={() => navigate(`/hackathon-view/${hackathon.id}`, { state: { hackathon, readOnly: true } })}
+                    >
+                      View
+                    </button>
+                    <button
+                      className="close-btn"
+                      onClick={() => navigate(`/hackathon-update/${hackathon.id}`, { state: { hackathon, isUpdate: true } })}
+                    >
+                      Update
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </section>
+          {/* --- Add Active Courses Listings --- */}
+          <section className="active-courses">
+            <div className="active-jobs-header">
+              <h3>Active Courses Listings</h3>
+              <a
+                href="#"
+                className="view-all-link"
+                onClick={e => {
+                  e.preventDefault();
+                  navigate("/manage-course");
+                }}
+              >
+                View All
+              </a>
+            </div>
+            {courses.length === 0 ? (
+              <div className="no-jobs-msg">No courses posted yet.</div>
+            ) : (
+              courses.map((course, idx) => (
+                <div className="job-card" key={course.id || idx}>
+                  <div className="job-title">{course.title}</div>
+                  <div className="job-meta">
+                    <span>📍 {course.location}</span>
+                    <span>• {course.type}</span>
+                    <span>• 🗓 {course.startDate}</span>
+                  </div>
+                  <div className="job-actions">
+                    <button
+                      className="edit-btn"
+                      onClick={() => navigate(`/course-view/${course.id}`, { state: { course, readOnly: true } })}
+                    >
+                      View
+                    </button>
+                    <button
+                      className="close-btn"
+                      onClick={() => navigate(`/course-update/${course.id}`, { state: { course, isUpdate: true } })}
+                    >
+                      Update
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </section>
+          {/* --- End of new sections --- */}
           <section className="recent-applications">
             <div className="recent-applications-header">
               <h3>Recent Applications</h3>
@@ -214,7 +343,7 @@ export default function RecruiterDashboard() {
             {recentApplications.map((app, idx) => (
               <div className="recent-app-card" key={idx}>
                 <img src={app.img} alt={app.name} className="recent-app-img" />
-                <div className="recent-app-info">
+                <div className="recent-app_info">
                   <div className="recent-app-name">{app.name}</div>
                   <div className="recent-app_position">{app.position}</div>
                   <div className="recent-app-date">Applied: {app.date}</div>

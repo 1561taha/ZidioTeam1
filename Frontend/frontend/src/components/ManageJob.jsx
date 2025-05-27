@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./ManageJob.css";
 
-export default function ManageJob() {
-  const [jobs, setJobs] = useState([]);
+export default function ManageJob({ jobs, setJobs, updateJob }) {
   const [loading, setLoading] = useState(true);
   const [editingJob, setEditingJob] = useState(null);
   const [editTitle, setEditTitle] = useState("");
@@ -11,9 +10,14 @@ export default function ManageJob() {
   const [viewJob, setViewJob] = useState(null);
   const [error, setError] = useState("");
 
-  // Fetch jobs from backend
+  // Fetch jobs from backend if jobs are empty
   useEffect(() => {
-    fetchJobs();
+    if (!jobs || jobs.length === 0) {
+      fetchJobs();
+    } else {
+      setLoading(false);
+    }
+    // eslint-disable-next-line
   }, []);
 
   const fetchJobs = async () => {
@@ -47,23 +51,17 @@ export default function ManageJob() {
     setEditDescription(job.description);
   };
 
-  const handleUpdate = async () => {
+  // Inline update handler
+  const handleUpdateSave = async () => {
     try {
-      await axios.put(`/manage/job/${editingJob.id}`, {
+      const res = await axios.put(`/manage/job/${editingJob.id}`, {
         ...editingJob,
         title: editTitle,
         description: editDescription,
       });
-      setJobs(
-        jobs.map((job) =>
-          job.id === editingJob.id
-            ? { ...job, title: editTitle, description: editDescription }
-            : job
-        )
-      );
+      setJobs(jobs.map(job => job.id === editingJob.id ? res.data : job));
+      if (updateJob) updateJob(res.data);
       setEditingJob(null);
-      setEditTitle("");
-      setEditDescription("");
     } catch (err) {
       setError("Failed to update job.");
     }
@@ -160,7 +158,7 @@ export default function ManageJob() {
                 rows={4}
               />
               <div className="manage-job-modal-actions">
-                <button className="manage-job-btn update" onClick={handleUpdate}>
+                <button className="manage-job-btn update" onClick={handleUpdateSave}>
                   Save
                 </button>
                 <button

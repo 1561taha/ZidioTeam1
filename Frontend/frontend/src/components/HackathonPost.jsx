@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./HackathonPost.css";
 
-export default function HackathonPost() {
+export default function HackathonPost({ addHackathon }) {
+  const navigate = useNavigate();
   const [hackathon, setHackathon] = useState({
     title: "",
     organizer: "",
@@ -26,8 +28,16 @@ export default function HackathonPost() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    // Simulate backend post, then update parent state and navigate
+    if (addHackathon) {
+      // You may want to generate a unique id here
+      addHackathon({ ...hackathon, id: Date.now() });
+    }
     setMessage("Hackathon posted successfully!");
-    setTimeout(() => setMessage(""), 3000);
+    setTimeout(() => {
+      setMessage("");
+      navigate("/manage-hackathon");
+    }, 1000);
     setHackathon({
       title: "",
       organizer: "",

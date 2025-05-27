@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./CoursePost.css";
 
-export default function CoursePost() {
+export default function CoursePost({ addCourse }) {
+  const navigate = useNavigate();
   const [course, setCourse] = useState({
     title: "",
     provider: "",
@@ -27,24 +29,16 @@ export default function CoursePost() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    // ...post to backend if needed...
+    if (addCourse) {
+      addCourse({ ...course, id: Date.now() }); // Add unique id if needed
+    }
     setMessage("Course posted successfully!");
-    setTimeout(() => setMessage(""), 3000);
-    setCourse({
-      title: "",
-      provider: "",
-      mode: "",
-      location: "",
-      startDate: "",
-      endDate: "",
-      registrationDeadline: "",
-      description: "",
-      eligibility: "",
-      price: "",
-      duration: "",
-      certificate: "",
-      website: "",
-      contactEmail: "",
-    });
+    setTimeout(() => {
+      setMessage("");
+      navigate("/manage-course");
+    }, 1000);
+    // Reset form if desired
   };
 
   return (
