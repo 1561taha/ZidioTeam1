@@ -1,63 +1,86 @@
-import React, { useState } from "react";
-import "./JobPost.css"; // You can create InternshipPost.css if you want different styles
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import "./JobPost.css";
+import axios from "axios";
 
-export default function InternshipPost() {
-  const [internship, setInternship] = useState({
-    title: "",
-    company: "",
-    location: "",
-    internshipType: "",
-    mode: "",
-    duration: "",
-    stipend: "",
-    openings: "",
-    startDate: "",
-    applicationDeadline: "",
-    description: "",
-    responsibilities: "",
-    eligibility: "",
-    perks: "",
-    skills: "",
-    applyLink: "",
-  });
+const initialState = {
+  title: "",
+  company: "",
+  location: "",
+  internshipType: "",
+  mode: "",
+  duration: "",
+  stipend: "",
+  openings: "",
+  startDate: "",
+  applicationDeadline: "",
+  description: "",
+  responsibilities: "",
+  eligibility: "",
+  perks: "",
+  skills: "",
+  applyLink: "",
+};
 
+export default function InternshipPost({ addInternship, updateInternship }) {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { internship, readOnly, isUpdate } = location.state || {};
+
+  const [form, setForm] = useState(internship || initialState);
   const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (internship) setForm(internship);
+  }, [internship]);
 
   const handleChange = (e) => {
-    setInternship({ ...internship, [e.target.name]: e.target.value });
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage("Internship posted successfully!");
-    setTimeout(() => setMessage(""), 3000);
-    setInternship({
-      title: "",
-      company: "",
-      location: "",
-      internshipType: "",
-      mode: "",
-      duration: "",
-      stipend: "",
-      openings: "",
-      startDate: "",
-      applicationDeadline: "",
-      description: "",
-      responsibilities: "",
-      eligibility: "",
-      perks: "",
-      skills: "",
-      applyLink: "",
-    });
+    setMessage("");
+    setError("");
+    setLoading(true);
+
+    try {
+      if (isUpdate) {
+        // Update internship in backend
+        const res = await axios.put(`/manage/internship/${form.id}`, form);
+        if (updateInternship) updateInternship(res.data);
+        setMessage("Internship updated successfully!");
+        setTimeout(() => navigate("/manage-internship"), 1000);
+      } else {
+        // Post new internship
+        const res = await axios.post("/manage/internship", form);
+        setMessage("Internship posted successfully!");
+        if (addInternship) addInternship(res.data);
+        setTimeout(() => navigate("/manage-internship"), 1000);
+      }
+    } catch (err) {
+      setError(
+        err.response?.data?.message ||
+          "Failed to post/update internship. Please check all fields."
+      );
+    }
+    setLoading(false);
   };
 
   return (
     <div className="job-post-container">
       <div className="job-post-card">
         <div className="job-post-tabs">
-          <div className="job-post-tab">Internship Info</div>
+          <div className="job-post-tab">
+            {readOnly
+              ? "View Internship"
+              : isUpdate
+              ? "Update Internship"
+              : "Post a New Internship"}
+          </div>
         </div>
-        <h2 className="job-post-title">Post a New Internship</h2>
         <form className="job-post-form" onSubmit={handleSubmit}>
           <div className="form-row">
             <div className="form-group">
@@ -65,10 +88,11 @@ export default function InternshipPost() {
               <input
                 type="text"
                 name="title"
-                value={internship.title}
+                value={form.title}
                 onChange={handleChange}
                 placeholder="e.g. Marketing Intern"
                 required
+                disabled={readOnly}
               />
             </div>
             <div className="form-group">
@@ -76,10 +100,11 @@ export default function InternshipPost() {
               <input
                 type="text"
                 name="company"
-                value={internship.company}
+                value={form.company}
                 onChange={handleChange}
                 placeholder="e.g. Zidio Pvt Ltd"
                 required
+                disabled={readOnly}
               />
             </div>
           </div>
@@ -89,19 +114,21 @@ export default function InternshipPost() {
               <input
                 type="text"
                 name="location"
-                value={internship.location}
+                value={form.location}
                 onChange={handleChange}
                 placeholder="e.g. Remote, Mumbai"
                 required
+                disabled={readOnly}
               />
             </div>
             <div className="form-group">
               <label>Internship Type</label>
               <select
                 name="internshipType"
-                value={internship.internshipType}
+                value={form.internshipType}
                 onChange={handleChange}
                 required
+                disabled={readOnly}
               >
                 <option value="">Select Type</option>
                 <option value="Full-time">Full-time</option>
@@ -116,9 +143,10 @@ export default function InternshipPost() {
               <label>Mode</label>
               <select
                 name="mode"
-                value={internship.mode}
+                value={form.mode}
                 onChange={handleChange}
                 required
+                disabled={readOnly}
               >
                 <option value="">Select Mode</option>
                 <option value="On-site">On-site</option>
@@ -131,10 +159,11 @@ export default function InternshipPost() {
               <input
                 type="text"
                 name="duration"
-                value={internship.duration}
+                value={form.duration}
                 onChange={handleChange}
                 placeholder="e.g. 6 weeks"
                 required
+                disabled={readOnly}
               />
             </div>
           </div>
@@ -144,9 +173,10 @@ export default function InternshipPost() {
               <input
                 type="text"
                 name="stipend"
-                value={internship.stipend}
+                value={form.stipend}
                 onChange={handleChange}
                 placeholder="e.g. ₹10,000/month or Unpaid"
+                disabled={readOnly}
               />
             </div>
             <div className="form-group">
@@ -154,11 +184,12 @@ export default function InternshipPost() {
               <input
                 type="number"
                 name="openings"
-                value={internship.openings}
+                value={form.openings}
                 onChange={handleChange}
                 placeholder="e.g. 5"
                 min={1}
                 required
+                disabled={readOnly}
               />
             </div>
           </div>
@@ -168,9 +199,10 @@ export default function InternshipPost() {
               <input
                 type="date"
                 name="startDate"
-                value={internship.startDate}
+                value={form.startDate}
                 onChange={handleChange}
                 required
+                disabled={readOnly}
               />
             </div>
             <div className="form-group">
@@ -178,9 +210,10 @@ export default function InternshipPost() {
               <input
                 type="date"
                 name="applicationDeadline"
-                value={internship.applicationDeadline}
+                value={form.applicationDeadline}
                 onChange={handleChange}
                 required
+                disabled={readOnly}
               />
             </div>
           </div>
@@ -188,22 +221,24 @@ export default function InternshipPost() {
             <label>Internship Description</label>
             <textarea
               name="description"
-              value={internship.description}
+              value={form.description}
               onChange={handleChange}
               placeholder="Describe the internship role and expectations..."
               rows={3}
               required
+              disabled={readOnly}
             />
           </div>
           <div className="form-group">
             <label>Responsibilities</label>
             <textarea
               name="responsibilities"
-              value={internship.responsibilities}
+              value={form.responsibilities}
               onChange={handleChange}
               placeholder="List the responsibilities..."
               rows={2}
               required
+              disabled={readOnly}
             />
           </div>
           <div className="form-row">
@@ -211,11 +246,12 @@ export default function InternshipPost() {
               <label>Eligibility Criteria</label>
               <textarea
                 name="eligibility"
-                value={internship.eligibility}
+                value={form.eligibility}
                 onChange={handleChange}
                 placeholder="e.g. Only final year students"
                 rows={2}
                 required
+                disabled={readOnly}
               />
             </div>
             <div className="form-group">
@@ -223,9 +259,10 @@ export default function InternshipPost() {
               <input
                 type="text"
                 name="perks"
-                value={internship.perks}
+                value={form.perks}
                 onChange={handleChange}
                 placeholder="e.g. Certificate, PPO, Flexible Hours"
+                disabled={readOnly}
               />
             </div>
           </div>
@@ -233,28 +270,48 @@ export default function InternshipPost() {
             <label>Skills Required</label>
             <textarea
               name="skills"
-              value={internship.skills}
+              value={form.skills}
               onChange={handleChange}
               placeholder="e.g. Python, Communication, MS Excel"
               rows={2}
               required
+              disabled={readOnly}
             />
           </div>
-          <div className="form-group">
+          {/* <div className="form-group">
             <label>Application Link</label>
             <input
               type="url"
               name="applyLink"
-              value={internship.applyLink}
+              value={form.applyLink}
               onChange={handleChange}
               placeholder="e.g. https://company.com/apply"
               required
+              disabled={readOnly}
             />
-          </div>
-          <button className="job-post-btn" type="submit">
-            Post Internship
+          </div> */}
+          <button
+            className="job-post-btn"
+            type="submit"
+            disabled={loading || readOnly}
+          >
+            {loading
+              ? isUpdate
+                ? "Updating..."
+                : "Posting..."
+              : isUpdate
+              ? "Update Internship"
+              : "Post Internship"}
           </button>
           {message && <div className="job-post-success">{message}</div>}
+          {error && (
+            <div
+              className="job-post-success"
+              style={{ color: "#ef4444" }}
+            >
+              {error}
+            </div>
+          )}
         </form>
       </div>
     </div>

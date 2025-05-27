@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./JobPost.css";
 
@@ -17,11 +18,19 @@ const initialState = {
   endDate: "",
 };
 
-export default function JobPost() {
-  const [form, setForm] = useState(initialState);
+export default function JobPost({ addJob, updateJob }) {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { job, readOnly, isUpdate } = location.state || {};
+
+  const [form, setForm] = useState(job || initialState);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (job) setForm(job);
+  }, [job]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -33,26 +42,49 @@ export default function JobPost() {
     setError("");
     setLoading(true);
 
-    // Prepare data for backend
+    // Ensure skills and qualifications are always strings before splitting
+    const skillsString =
+      typeof form.skills === "string"
+        ? form.skills
+        : Array.isArray(form.skills)
+        ? form.skills.join(",")
+        : "";
+    const qualificationsString =
+      typeof form.qualifications === "string"
+        ? form.qualifications
+        : Array.isArray(form.qualifications)
+        ? form.qualifications.join(",")
+        : "";
+
     const payload = {
       ...form,
-      skills: form.skills.split(",").map((s) => s.trim()).filter(Boolean),
-      qualifications: form.qualifications.split(",").map((q) => q.trim()).filter(Boolean),
+      skills: skillsString.split(",").map((s) => s.trim()).filter(Boolean),
+      qualifications: qualificationsString.split(",").map((q) => q.trim()).filter(Boolean),
       salary: Number(form.salary),
       openings: Number(form.openings),
       startDate: form.startDate ? new Date(form.startDate).toISOString() : null,
       endDate: form.endDate ? new Date(form.endDate).toISOString() : null,
-      postedBy: "dummy", // This will be set by backend, but required by DTO
+      postedBy: "dummy", // Replace with actual user if needed
     };
 
     try {
-      await axios.post("/manage/job", payload);
-      setSuccess("Job posted successfully!");
-      setForm(initialState);
+      if (isUpdate) {
+        // Update job in backend
+        const res = await axios.put(`/manage/job/${form.id}`, payload);
+        if (updateJob) updateJob(res.data);
+        setSuccess("Job updated successfully!");
+        setTimeout(() => navigate("/manage-job"), 1000);
+      } else {
+        // Post new job
+        const res = await axios.post("/manage/job", payload);
+        setSuccess("Job posted successfully!");
+        if (addJob) addJob(res.data); // <-- Add to jobs state
+        setTimeout(() => navigate("/manage-job"), 1000);
+      }
     } catch (err) {
       setError(
         err.response?.data?.message ||
-        "Failed to post job. Please check all fields."
+          "Failed to post/update job. Please check all fields."
       );
     }
     setLoading(false);
@@ -62,7 +94,9 @@ export default function JobPost() {
     <div className="job-post-container">
       <div className="job-post-card">
         <div className="job-post-tabs">
-          <div className="job-post-tab">Post a New Job</div>
+          <div className="job-post-tab">
+            {readOnly ? "View Job" : isUpdate ? "Update Job" : "Post a New Job"}
+          </div>
         </div>
         <form className="job-post-form" onSubmit={handleSubmit}>
           <div className="form-row">
@@ -74,6 +108,8 @@ export default function JobPost() {
                 onChange={handleChange}
                 required
                 maxLength={255}
+                readOnly={readOnly}
+                disabled={readOnly}
               />
             </div>
             <div className="form-group">
@@ -84,6 +120,8 @@ export default function JobPost() {
                 onChange={handleChange}
                 required
                 maxLength={255}
+                readOnly={readOnly}
+                disabled={readOnly}
               />
             </div>
           </div>
@@ -96,28 +134,42 @@ export default function JobPost() {
                 onChange={handleChange}
                 required
                 maxLength={2000}
+                readOnly={readOnly}
+                disabled={readOnly}
               />
             </div>
           </div>
           <div className="form-row">
             <div className="form-group">
-              <label>Skills <span style={{fontWeight:400}}>(comma separated)</span></label>
+              <label>Skills <span style={{ fontWeight: 400 }}>(comma separated)</span></label>
               <input
                 name="skills"
-                value={form.skills}
+                value={
+                  Array.isArray(form.skills)
+                    ? form.skills.join(", ")
+                    : form.skills
+                }
                 onChange={handleChange}
                 required
                 placeholder="e.g. React, Node.js, SQL"
+                readOnly={readOnly}
+                disabled={readOnly}
               />
             </div>
             <div className="form-group">
-              <label>Qualifications <span style={{fontWeight:400}}>(comma separated)</span></label>
+              <label>Qualifications <span style={{ fontWeight: 400 }}>(comma separated)</span></label>
               <input
                 name="qualifications"
-                value={form.qualifications}
+                value={
+                  Array.isArray(form.qualifications)
+                    ? form.qualifications.join(", ")
+                    : form.qualifications
+                }
                 onChange={handleChange}
                 required
                 placeholder="e.g. B.Tech, M.Sc"
+                readOnly={readOnly}
+                disabled={readOnly}
               />
             </div>
           </div>
@@ -130,6 +182,8 @@ export default function JobPost() {
                 onChange={handleChange}
                 required
                 maxLength={255}
+                readOnly={readOnly}
+                disabled={readOnly}
               />
             </div>
             <div className="form-group">
@@ -139,6 +193,8 @@ export default function JobPost() {
                 value={form.jobType}
                 onChange={handleChange}
                 required
+                readOnly={readOnly}
+                disabled={readOnly}
               >
                 <option value="">Select</option>
                 <option value="Full-time">Full-time</option>
@@ -158,6 +214,8 @@ export default function JobPost() {
                 onChange={handleChange}
                 required
                 min={0}
+                readOnly={readOnly}
+                disabled={readOnly}
               />
             </div>
             <div className="form-group">
@@ -167,6 +225,8 @@ export default function JobPost() {
                 value={form.experienceLevel}
                 onChange={handleChange}
                 required
+                readOnly={readOnly}
+                disabled={readOnly}
               >
                 <option value="">Select</option>
                 <option value="Entry">Entry</option>
@@ -184,6 +244,8 @@ export default function JobPost() {
                 value={form.startDate}
                 onChange={handleChange}
                 required
+                readOnly={readOnly}
+                disabled={readOnly}
               />
             </div>
             <div className="form-group">
@@ -194,10 +256,12 @@ export default function JobPost() {
                 value={form.endDate}
                 onChange={handleChange}
                 required
+                readOnly={readOnly}
+                disabled={readOnly}
               />
             </div>
             <div className="form-group">
-              <label>Openings</label>
+              <label>No. of Openings</label>
               <input
                 name="openings"
                 type="number"
@@ -205,12 +269,16 @@ export default function JobPost() {
                 onChange={handleChange}
                 required
                 min={1}
+                readOnly={readOnly}
+                disabled={readOnly}
               />
             </div>
           </div>
-          <button className="job-post-btn" type="submit" disabled={loading}>
-            {loading ? "Posting..." : "Post Job"}
-          </button>
+          {!readOnly && (
+            <button className="job-post-btn" type="submit" disabled={loading}>
+              {loading ? (isUpdate ? "Updating..." : "Posting...") : (isUpdate ? "Update Job" : "Post Job")}
+            </button>
+          )}
           {success && <div className="job-post-success">{success}</div>}
           {error && <div className="job-post-success" style={{ color: "#ef4444" }}>{error}</div>}
         </form>
